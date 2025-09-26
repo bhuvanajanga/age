@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator</title>
+  
+  <!-- Luxon -->
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+  
+  <!-- Flatpickr for datepicker -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      background: #7c3aed;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #5b21b6;
+    }
+    .result {
+      margin-top: 1.2rem;
+      font-weight: bold;
+      color: #222;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Age Calculator</h2>
+    <form id="ageForm">
+      <input type="text" id="birthdate" placeholder="Select your birthdate" readonly>
+      <button type="submit">Calculate Age</button>
+    </form>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const { DateTime } = luxon;
+
+    // Initialize Flatpickr
+    flatpickr("#birthdate", {
+      dateFormat: "Y-m-d",
+      maxDate: "today"
+    });
+
+    document.getElementById("ageForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const birthdateValue = document.getElementById("birthdate").value;
+
+      if (!birthdateValue) {
+        document.getElementById("result").textContent = "⚠️ Please select your birthdate.";
+        return;
+      }
+
+      const birthDate = DateTime.fromISO(birthdateValue);
+      const now = DateTime.now();
+
+      if (!birthDate.isValid || birthDate > now) {
+        document.getElementById("result").textContent = "⚠️ Invalid birthdate. Please try again.";
+        return;
+      }
+
+      const diff = now.diff(birthDate, ["years", "months", "days"]).toObject();
+      const years = Math.floor(diff.years);
+      const months = Math.floor(diff.months);
+      const days = Math.floor(diff.days);
+
+      document.getElementById("result").textContent = 
+        `🎉 You are ${years} years, ${months} months, and ${days} days old.`;
+    });
+  </script>
+</body>
+</html>
